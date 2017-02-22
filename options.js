@@ -14,6 +14,7 @@ function setWorkDuration(){
 
 function setBreakDuration(){
   breakDuration = parseInt(breakMinutes.value) * 60 + parseInt(breakSeconds.value);
+  document.getElementById("break").innerHTML = breakDuration;
 }
 
 function setStartTime(){
@@ -32,10 +33,14 @@ function sessionSwitch(){
     duration = workDuration;
   }
   setStartTime();
+  update_time();
 }
 
 //Placeholder function for alarm
 function alarmAlert(){
+  var myAudio = new Audio();
+  myAudio.src = "alert.wav"
+  myAudio.play();
 }
 
 //Returns remaining time - duration - elapsed time

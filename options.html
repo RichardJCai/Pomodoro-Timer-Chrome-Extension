@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head><title>Pomodoro Timer</title></head>
+<head>
+  <link rel="stylesheet" href="style.css">
+</head>
 <body>
 
 <a style = "font-size: 20px; font-family: Verdana">Timer: </a>
@@ -8,6 +11,7 @@
 
 <br></br>
 
+<div id = "element1">
 <form>
   <a> Minutes: </a>
   <input id = "workMinutes" type="text" name="Time" value = "0"><br>
@@ -15,10 +19,9 @@
   <input id = "workSeconds" type="text" name="Time" value = "15"><br>
 </form>
 <button id = "setWorkDuration">Set Work Duration</button>
+</div>
 
-<br></br>
-<br></br>
-
+<div id = "element1">
 <form>
   <a> Minutes: </a>
   <input id = "breakMinutes" type="text" name="Time" value = "0"><br>
@@ -26,13 +29,25 @@
   <input id = "breakSeconds" type="text" name="Time" value = "10"><br>
 </form>
 <button id = "setBreakDuration">Set Break Duration</button>
+</div>
 
 <br></br>
-<a id = "minsec">xd </a>
+<a> Start Time: </a>
+<a id = "minsec"></a>
 <br></br>
-<a id = "minsec2">minsec2 </a>
+
+<a> End Time: </a>
+<a id = "minsec2"></a>
 <br></br>
-<a id = "test">xd</a>
+
+<a> Work Duration: </a>
+<a id = "test">0</a>
+<a> seconds </a>
+
+<br></br>
+<a> Duration Duration: </a>
+<a id = "break">0</a>
+<a> seconds </a>
 
 <div></div>
 
