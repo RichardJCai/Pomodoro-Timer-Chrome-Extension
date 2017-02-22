@@ -5,6 +5,8 @@ var startTime;
 var clockInterval;
 var duration;
 var workSession = true; //Starts with a work session
+var paused;
+var elapsedTime;
 
 
 function setWorkDuration(){
@@ -20,7 +22,7 @@ function setBreakDuration(){
 function setStartTime(){
   var d = new Date();
   startTime = d.getMinutes() * 60 + d.getSeconds();
-  document.getElementById('minsec').innerHTML = d.getMinutes()*60 + " " + d.getSeconds(); //Current Time
+  document.getElementById('minsec').innerHTML = d.getMinutes() + ":" + d.getSeconds(); //Current Time
 }
 
 function sessionSwitch(){
@@ -46,8 +48,9 @@ function alarmAlert(){
 //Returns remaining time - duration - elapsed time
 function countdown(startTime){
   var curr = new Date();
-  document.getElementById('minsec2').innerHTML = curr.getMinutes()*60 + " " + curr.getSeconds(); //Current Time
-  return parseInt(duration) - (parseInt(curr.getMinutes())*60 + parseInt(curr.getSeconds()) - parseInt(startTime)); //Duration - Elapsed Time
+  document.getElementById('minsec2').innerHTML = curr.getMinutes() + ":" + curr.getSeconds(); //Current Time
+  elapsedTime = (parseInt(curr.getMinutes())*60 + parseInt(curr.getSeconds()) - parseInt(startTime))
+  return parseInt(duration) - elapsedTime; //Duration - Elapsed Time
 }
 
 //Displays the time
@@ -71,13 +74,39 @@ function update_time(){
   }
 }
 
-function func_start(){
+function startTimer(){
   duration = workDuration; //Placeholder code
+  setStartTime();
+  update_time();
   clockInterval = setInterval(update_time,1000);
+  paused = false;
+}
+
+function stopTimer(){
+  clearInterval(clockInterval);
+  document.getElementById("time").innerHTML = "0:00"
+}
+
+function pauseTimer(){
+  if (!paused){
+    clearInterval(clockInterval);
+    document.getElementById("pause").innerHTML = "Resume";
+  }
+  else{
+    setStartTime();
+    duration -= elapsedTime;
+    update_time();
+    clockInterval = setInterval(update_time,1000);
+    document.getElementById("pause").innerHTML = "Pause";
+  }
+  paused = !paused;
+
 }
 
 
 document.getElementById('start').addEventListener('click',
-    func_start);
+    startTimer);
 document.getElementById("setWorkDuration").addEventListener("click",setWorkDuration);
 document.getElementById("setBreakDuration").addEventListener("click",setBreakDuration);
+document.getElementById("stop").addEventListener("click",stopTimer);
+document.getElementById("pause").addEventListener("click",pauseTimer);
