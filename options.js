@@ -22,7 +22,7 @@ function setBreakDuration(){
 function setStartTime(){
   var d = new Date();
   startTime = d.getMinutes() * 60 + d.getSeconds();
-  document.getElementById('minsec').innerHTML = d.getMinutes() + ":" + d.getSeconds(); //Current Time
+  document.getElementById('minsec').innerHTML = d.getMinutes() + ":" + d.getSeconds();
 }
 
 function sessionSwitch(){
@@ -50,6 +50,10 @@ function countdown(startTime){
   var curr = new Date();
   document.getElementById('minsec2').innerHTML = curr.getMinutes() + ":" + curr.getSeconds(); //Current Time
   elapsedTime = (parseInt(curr.getMinutes())*60 + parseInt(curr.getSeconds()) - parseInt(startTime))
+
+  if (elapsedTime < 0){
+    elapsedTime += 3600;
+  }
   return parseInt(duration) - elapsedTime; //Duration - Elapsed Time
 }
 
@@ -80,11 +84,17 @@ function startTimer(){
   update_time();
   clockInterval = setInterval(update_time,1000);
   paused = false;
+  document.getElementById("start").style.visibility = "hidden";
+  document.getElementById("stop").style.visibility = "visible";
+  document.getElementById("pause").style.visibility = "visible";
 }
 
 function stopTimer(){
   clearInterval(clockInterval);
   document.getElementById("time").innerHTML = "0:00"
+  document.getElementById("start").style.visibility = "visible";
+  document.getElementById("pause").style.visibility = "hidden";
+  document.getElementById("stop").style.visibility = "hidden"; // Could use a function to hide/display functions
 }
 
 function pauseTimer(){
@@ -110,3 +120,6 @@ document.getElementById("setWorkDuration").addEventListener("click",setWorkDurat
 document.getElementById("setBreakDuration").addEventListener("click",setBreakDuration);
 document.getElementById("stop").addEventListener("click",stopTimer);
 document.getElementById("pause").addEventListener("click",pauseTimer);
+
+document.getElementById("stop").style.visibility = "hidden";
+document.getElementById("pause").style.visibility = "hidden";
