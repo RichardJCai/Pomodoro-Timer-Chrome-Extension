@@ -1,125 +1,69 @@
-var flag = false;
 var workDuration;
 var breakDuration;
-var startTime;
-var clockInterval;
-var duration;
-var workSession = true; //Starts with a work session
-var paused;
-var elapsedTime;
-
 
 function setWorkDuration(){
-  workDuration = parseInt(workMinutes.value) * 60 + parseInt(workSeconds.value);
-  document.getElementById("test").innerHTML = workDuration;
+  chrome.storage.sync.set({'workMinutes': parseInt(workMinutes.value)}, function() {});
+  chrome.storage.sync.set({'workSeconds': parseInt(workSeconds.value)}, function() {});
 }
 
 function setBreakDuration(){
-  breakDuration = parseInt(breakMinutes.value) * 60 + parseInt(breakSeconds.value);
-  document.getElementById("break").innerHTML = breakDuration;
+  chrome.storage.sync.set({'breakMinutes': parseInt(workMinutes.value)}, function() {});
+  chrome.storage.sync.set({'breakSeconds': parseInt(breakSeconds.value)}, function() {});
 }
 
-function setStartTime(){
-  var d = new Date();
-  startTime = d.getMinutes() * 60 + d.getSeconds();
-  document.getElementById('minsec').innerHTML = d.getMinutes() + ":" + d.getSeconds();
+function openTimerPage(){
+  window.open('timer.html', '_blank');
 }
 
-function sessionSwitch(){
-  if (workSession){
-    workSession = false;
-    duration = breakDuration;
-  }
-  else{
-    workSession = true;
-    duration = workDuration;
-  }
-  setStartTime();
-  update_time();
+function load(){
+  document.getElementById('start').addEventListener('click',
+      openTimerPage);
+  document.getElementById("setWorkDuration").addEventListener("click",setWorkDuration);
+  document.getElementById("setBreakDuration").addEventListener("click",setBreakDuration);
 }
 
-//Placeholder function for alarm
-function alarmAlert(){
-  var myAudio = new Audio();
-  myAudio.src = "alert.wav"
-  myAudio.play();
+function setFormValues(workM,breakM,workS,breakS){
+  document.getElementById("workMinutes").value = workM;
+  document.getElementById("workSeconds").value = workS;
+  document.getElementById("breakMinutes").value = breakM;
+  document.getElementById("breakSeconds").value  = breakS;
 }
 
-//Returns remaining time - duration - elapsed time
-function countdown(startTime){
-  var curr = new Date();
-  document.getElementById('minsec2').innerHTML = curr.getMinutes() + ":" + curr.getSeconds(); //Current Time
-  elapsedTime = (parseInt(curr.getMinutes())*60 + parseInt(curr.getSeconds()) - parseInt(startTime))
-
-  if (elapsedTime < 0){
-    elapsedTime += 3600;
-  }
-  return parseInt(duration) - elapsedTime; //Duration - Elapsed Time
-}
-
-//Displays the time
-function update_time(){
-  if (!flag){
-    setStartTime();
-    flag = true;
-  }
-
-  if (countdown(startTime) >= 0){
-    if (Math.floor((parseInt((countdown(startTime)))%60)/10) == 0){
-      document.getElementById('time').innerHTML = Math.floor((countdown(startTime))/60) + ":" + "0" + parseInt((countdown(startTime)))%60;
+function getSaveData(callback){
+  chrome.storage.sync.get(["workMinutes","breakMinutes","workSeconds","breakSeconds"],function(result) {
+    var wM,bM,wS,bS;
+    if (typeof result.workMinutes === "undefined"){
+      wM = 0;
     }
     else{
-      document.getElementById('time').innerHTML = Math.floor((countdown(startTime))/60) + ":" + parseInt((countdown(startTime)))%60;
+      wM = result.workMinutes;
     }
-  }
-  else{
-    alarmAlert();
-    sessionSwitch();
-  }
+    if (typeof result.breakMinutes === "undefined"){
+      bM = 0;
+    }
+    else{
+      bM = result.breakMinutes;
+    }
+    if (typeof result.workSeconds === "undefined"){
+      wS = 0;
+    }
+    else{
+      wS = result.workSeconds;
+    }
+    if (typeof result.breakSeconds === "undefined"){
+      bS = 0;
+    }
+    else{
+      bS = result.breakSeconds;
+    }
+    callback(wM,bM,wS,bS);
+  });
 }
 
-function startTimer(){
-  duration = workDuration; //Placeholder code
-  setStartTime();
-  update_time();
-  clockInterval = setInterval(update_time,1000);
-  paused = false;
-  document.getElementById("start").style.visibility = "hidden";
-  document.getElementById("stop").style.visibility = "visible";
-  document.getElementById("pause").style.visibility = "visible";
-}
+document.getElementById("workMinutes").value = "loading...";
+document.getElementById("workSeconds").value = "loading...";
+document.getElementById("breakMinutes").value = "loading...";
+document.getElementById("breakSeconds").value = "loading...";
 
-function stopTimer(){
-  clearInterval(clockInterval);
-  document.getElementById("time").innerHTML = "0:00"
-  document.getElementById("start").style.visibility = "visible";
-  document.getElementById("pause").style.visibility = "hidden";
-  document.getElementById("stop").style.visibility = "hidden"; // Could use a function to hide/display functions
-}
-
-function pauseTimer(){
-  if (!paused){
-    clearInterval(clockInterval);
-    document.getElementById("pause").innerHTML = "Resume";
-  }
-  else{
-    setStartTime();
-    duration -= elapsedTime;
-    update_time();
-    clockInterval = setInterval(update_time,1000);
-    document.getElementById("pause").innerHTML = "Pause";
-  }
-  paused = !paused;
-
-}
-
-
-document.getElementById('start').addEventListener('click',
-    startTimer);
-document.getElementById("setWorkDuration").addEventListener("click",setWorkDuration);
-document.getElementById("setBreakDuration").addEventListener("click",setBreakDuration);
-document.getElementById("stop").addEventListener("click",stopTimer);
-document.getElementById("pause").addEventListener("click",pauseTimer);
-
-document.getElementById("stop").style.visibility = "hidden";
-document.getElementById("pause").style.visibility = "hidden";
+getSaveData(setFormValues);
+load();
